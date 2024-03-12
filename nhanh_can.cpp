@@ -6,7 +6,7 @@
 
 using namespace std;
 
-// Function to read the matrix from file
+// read the matrix from file
 tuple<vector<vector<int>>, int, int, int> readMatrixFromFile(const string& filename) {
     ifstream file(filename);
     vector<vector<int>> matrix;
@@ -16,7 +16,7 @@ tuple<vector<vector<int>>, int, int, int> readMatrixFromFile(const string& filen
         string line;
         getline(file, line);
         istringstream iss(line);
-        iss >> n >> m >> b; // Assuming the first line contains n, m, and b
+        iss >> n >> m >> b;
         while (getline(file, line)) {
             vector<int> row;
             istringstream iss(line);
@@ -35,7 +35,7 @@ tuple<vector<vector<int>>, int, int, int> readMatrixFromFile(const string& filen
     return make_tuple(matrix, n, m, b);
 }
 
-// Function to create matrix c based on the rules
+// create matrix c 
 vector<vector<int>> createMatrixC(const vector<vector<int>>& matrix, int maxNum) {
     vector<vector<int>> c(matrix.size(), vector<int>(maxNum, 0));
 
@@ -48,7 +48,6 @@ vector<vector<int>> createMatrixC(const vector<vector<int>>& matrix, int maxNum)
     return c;
 }
 
-// Function to display a matrix
 void displayMatrix(const vector<vector<int>>& matrix) {
     for (const auto& row : matrix) {
         for (int element : row) {
@@ -73,7 +72,7 @@ bool checkRowsSum(const vector<vector<int>>& matrix, int b) {
 
 int maxColumnSum(const vector<vector<int>>& matrix) {
     if(matrix.empty() || matrix[0].empty())
-        return 0; // Return 0 if the matrix is empty
+        return 0;
     
     int maxSum = 0;
     int numColumns = matrix[0].size();
@@ -107,14 +106,12 @@ vector<vector<int>> elementWiseMatrixMultiplication(const vector<vector<int>>& m
 
 tuple<vector<vector<int>>, int> getSolutionMatrix(int n, int m, int b, const vector<vector<int>> c) {
     vector<vector<int>> bestMatrix;
-    int minMaxColumnSum = INT_MAX; // Initialize with a large value
+    int minMaxColumnSum = INT_MAX; 
 
-    // Helper function to generate all combinations of rows recursively
     function<void(int, int)> generate = [&](int row, int col) {
-        vector<vector<int>> matrix(n, vector<int>(m, 0)); // Initialize matrix with all zeros
-
-        if (row == n) { // Base case: All rows are filled
-            if (checkRowsSum(matrix, b)) { // Check if the sum of each row equals b
+        vector<vector<int>> matrix(n, vector<int>(m, 0)); 
+        if (row == n) { // All rows are filled
+            if (checkRowsSum(matrix, b)) { 
                 if (checkRowsSum(elementWiseMatrixMultiplication(matrix, c), b)) {
                     int currentMaxColumnSum = maxColumnSum(matrix);
                     if (currentMaxColumnSum < minMaxColumnSum) {
@@ -126,7 +123,6 @@ tuple<vector<vector<int>>, int> getSolutionMatrix(int n, int m, int b, const vec
             return;
         }
 
-        // Try placing 1 or 0 in the current cell and proceed recursively
         for (int val = 0; val <= 1; ++val) {
             matrix[row][col] = val;
             if (col + 1 < m)
@@ -136,7 +132,7 @@ tuple<vector<vector<int>>, int> getSolutionMatrix(int n, int m, int b, const vec
         }
     };
 
-    generate(0, 0); // Start generation from the first cell
+    generate(0, 0);
 
     return make_tuple(bestMatrix, minMaxColumnSum);
 }
